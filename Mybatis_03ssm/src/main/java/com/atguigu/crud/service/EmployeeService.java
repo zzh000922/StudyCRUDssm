@@ -44,4 +44,12 @@ public class EmployeeService {
         return employee;
 
     }
+
+    public void updateEmp(Employee employee) {
+        employeeMapper.updateByPrimaryKeySelective(employee);
+    }
+
+    public void deleteEmp(Integer id) {
+        employeeMapper.deleteByPrimaryKey(id);
+    }
 }

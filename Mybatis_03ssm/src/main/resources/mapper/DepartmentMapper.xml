@@ -161,9 +161,5 @@
     set dept_name = #{deptName,jdbcType=VARCHAR}
     where dept_id = #{deptId,jdbcType=INTEGER}
   </update>
-  <resultMap id="BaseResultMap" type="com.atguigu.crud.bean.Department">
-    <id column="dept_id" jdbcType="INTEGER" property="deptId" />
-    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
-  </resultMap>
 
 </mapper>

@@ -19,12 +19,25 @@ import java.util.List;
 @Controller
 public class EmployeeController {
 
-
-    EmployeeService employeeService;
+     EmployeeService employeeService;
 
     @Autowired
     private void setEmployeeService(EmployeeService employeeService){
         this.employeeService=employeeService;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/emp/{id}",method = RequestMethod.DELETE)
+    public Msg deleteEmpById(@PathVariable("id")Integer id){
+        employeeService.deleteEmp(id);
+        return Msg.success();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/emp/{empId}",method = RequestMethod.PUT)
+    public Msg saveEmp(Employee employee){
+        employeeService.updateEmp(employee);
+        return Msg.success();
     }
 
     @ResponseBody

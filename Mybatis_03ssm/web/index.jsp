@@ -145,7 +145,7 @@
         </div>
     </div>
     <script>
-        var totalRecord;
+        var totalRecord,currentPage;
         $(function () {
             to_page(1);
         });
@@ -175,7 +175,7 @@
                 editBtn.attr("edit-id",item.empId);
                 var deleteBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
                                 .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
-                deleteBtn.attr("edit-id",item.empId);
+                deleteBtn.attr("del-id",item.empId);
                 var btnTd= $("<td></td>").append(editBtn).append(" ").append(deleteBtn);
                 $("<tr></tr>").append(empIdTd)
                     .append(empNameTd)
@@ -190,6 +190,7 @@
             $("#page_info_area").empty();
             $("#page_info_area").append("当前"+result.extend.pageInfo.pageNum+"页，总共"+result.extend.pageInfo.pages+"页,总共"+result.extend.pageInfo.total+"条记录")
             totalRecord = result.extend.pageInfo.total;
+            currentPage = result.extend.pageInfo.pageNum;
         }
         function build_page_nav(result){
             $("#page_nav_area").empty();
@@ -257,7 +258,7 @@
                 url: "${APP_PATH}/depts",
                 type:"GET",
                 success:function (result){
-                    $("#dept_add_select").empty();
+                    $(ele).empty();
                     $.each(result.extend.depts,function (){
                        var optionEle = $("<option></option>").append(this.deptName).attr("value",this.deptId);
                        optionEle.appendTo(ele);
@@ -274,7 +275,6 @@
                 return false;
             }else {
                 show_validate_msg("#empName_add_input","success","");
-
             }
             var email = $("#email_add_input").val();
             var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
@@ -341,9 +341,11 @@
                 }
             });
         });
+
         $(document).on("click",".edit_btn",function (){
             getDepts("#empUpdateModal select");
             getEmp($(this).attr("edit-id"));
+            $("#emp_update_btn").attr("edit-id",$(this).attr("edit-id"));
             $("#empUpdateModal").modal({
                 backdrop: "static"
             });
@@ -360,7 +362,41 @@
                     $("#empUpdateModal select").val([empDate.dId]);
                 }
             });
-        }
+        };
+        $("#emp_update_btn").click(function (){
+            var email = $("#email_update_input").val();
+            var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+            if (!regEmail.test(email)){
+                show_validate_msg("#emp_update_btn","error","邮箱格式不正确");
+                return false;
+            }else {
+                show_validate_msg("#emp_update_btn","success","");
+            }
+            $.ajax({
+                url:"${APP_PATH}/emp/"+$(this).attr("edit-id"),
+                type:"PUT",
+                data:$("#empUpdateModal form").serialize(),
+                success:function (result){
+                    $("#empUpdateModal").modal("hide");
+                    to_page(currentPage);
+                }
+            });
+        });
+        $(document).on("click",".delete_btn",function (){
+
+            var empName = $(this).parents("tr").find("td:eq(1)").text();
+            var empId = $(this).attr("del-id");
+            if (confirm("确认删除【"+empName+"】吗?")){
+                $.ajax({
+                    url:"${APP_PATH}/emp/"+empId,
+                    type:"DELETE",
+                    success:function (result){
+                        alert(result.msg);
+                        to_page(currentPage);
+                    }
+                })
+            }
+        });
     </script>
 </body>
 </html>
