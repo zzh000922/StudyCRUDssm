@@ -38,4 +38,10 @@ public class EmployeeService {
         long l = employeeMapper.countByExample(employeeExample);
         return l==0;
     }
+
+    public Employee getEmp(Integer id) {
+        Employee employee = employeeMapper.selectByPrimaryKey(id);
+        return employee;
+
+    }
 }

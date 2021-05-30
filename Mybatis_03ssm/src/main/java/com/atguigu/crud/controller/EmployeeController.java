@@ -27,9 +27,16 @@ public class EmployeeController {
         this.employeeService=employeeService;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/emp/{id}",method = RequestMethod.GET)
+    public Msg getEmp(@PathVariable("id") Integer id){
+        Employee employee = employeeService.getEmp(id);
+        return Msg.success().add("emp",employee);
+    }
+
     @RequestMapping("/checkuser")
     @ResponseBody
-    public Msg checkUser(@RequestParam("empName") String empName){
+    public Msg checkUser(@RequestParam(value = "empName",required = true) String empName){
         String regx = "(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
         if (!empName.matches(regx)){
             return Msg.fail().add("va_msg","用户名必须是2-5位中文或者6-16位英文和数字的组合");

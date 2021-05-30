@@ -23,8 +23,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">empName</label>
                         <div class="col-sm-10">
-                            <input type="text" name="empName" class="form-control" id="empName_update_input" placeholder="empName">
-                            <span class="help-block"></span>
+                            <p class="form-control-static" id="empName_update_static"></p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -173,8 +172,10 @@
                 var deptNameTd=$("<td></td>").append(item.department.deptName);
                 var editBtn = $("<button></button>").addClass("btn btn-primary btn-sm edit_btn")
                                 .append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append("编辑");
+                editBtn.attr("edit-id",item.empId);
                 var deleteBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
                                 .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+                deleteBtn.attr("edit-id",item.empId);
                 var btnTd= $("<td></td>").append(editBtn).append(" ").append(deleteBtn);
                 $("<tr></tr>").append(empIdTd)
                     .append(empNameTd)
@@ -246,12 +247,12 @@
         }
         $("#emp_add_modal_btn").click(function (){
             $("#empAddModal form")[0].reset();
-            getDepts();
+            getDepts("#dept_add_select");
            $("#empAddModal").modal({
                backdrop:"static"
            });
         });
-        function getDepts() {
+        function getDepts(ele) {
             $.ajax({
                 url: "${APP_PATH}/depts",
                 type:"GET",
@@ -259,7 +260,7 @@
                     $("#dept_add_select").empty();
                     $.each(result.extend.depts,function (){
                        var optionEle = $("<option></option>").append(this.deptName).attr("value",this.deptId);
-                       optionEle.appendTo("#dept_add_select");
+                       optionEle.appendTo(ele);
                     });
                 }
             });
@@ -341,11 +342,25 @@
             });
         });
         $(document).on("click",".edit_btn",function (){
-
+            getDepts("#empUpdateModal select");
+            getEmp($(this).attr("edit-id"));
             $("#empUpdateModal").modal({
                 backdrop: "static"
             });
         });
+        function getEmp(id){
+            $.ajax({
+                url:"${APP_PATH}/emp/"+id,
+                type:"GET",
+                success:function (result){
+                    var empDate = result.extend.emp;
+                    $("#empName_update_static").text(empDate.empName);
+                    $("#email_update_input").val(empDate.email);
+                    $("#empUpdateModal input[name=gender]").val([empDate.gender]);
+                    $("#empUpdateModal select").val([empDate.dId]);
+                }
+            });
+        }
     </script>
 </body>
 </html>

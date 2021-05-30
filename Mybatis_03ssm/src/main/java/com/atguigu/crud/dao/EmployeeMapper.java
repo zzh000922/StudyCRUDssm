@@ -28,5 +28,7 @@ public interface EmployeeMapper {
 
     int updateByPrimaryKey(Employee record);
 
-    List<Employee> selectByExampleWithDept(EmployeeExample employeeExample);
+    List<Employee> selectByExampleWithDept(EmployeeExample example);
+
+    Employee selectByPrimaryKeyWithDept(Integer empId);
 }
